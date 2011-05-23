@@ -41,6 +41,7 @@ public class InstrumentProcessorTest {
 	public void testProcessExecutesNextTask() throws Exception {
 		for (String task : tasks) {
 			processor.process();
+			Thread.sleep(500);
 			assertEquals(task, instrumentListener.lastExecutedTask);
 		}
 	}
