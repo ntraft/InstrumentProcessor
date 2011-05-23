@@ -3,7 +3,8 @@ package org.bostoncodingdojo;
 import java.util.ArrayList;
 import java.util.List;
 
-final class DefaultInstrument implements Instrument {
+// Problem: We'd like it to be final, but we can't because the test needs to extend it.
+class DefaultInstrument implements Instrument {
 	
 	List<InstrumentListener> listeners = new ArrayList<InstrumentListener>();
 	
