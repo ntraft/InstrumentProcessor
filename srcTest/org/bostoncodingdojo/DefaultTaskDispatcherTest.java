@@ -1,6 +1,7 @@
 package org.bostoncodingdojo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -17,6 +18,13 @@ public class DefaultTaskDispatcherTest {
 		DefaultTaskDispatcher dispatcher = new DefaultTaskDispatcher(tasks);
 		for (int i=0; i<tasks.length; i++) {
 			assertEquals(tasks[i], dispatcher.getTask());
+		}
+		
+		try {
+			dispatcher.getTask();
+			fail();
+		} catch (IndexOutOfBoundsException t) {
+			// Success.
 		}
 	}
 }
