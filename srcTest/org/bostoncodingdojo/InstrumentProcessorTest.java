@@ -3,12 +3,16 @@ package org.bostoncodingdojo;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.io.PrintStream;
 
 import org.junit.After;
 import org.junit.Before;
@@ -109,6 +113,24 @@ public class InstrumentProcessorTest {
 	
 	@Test
 	public void testErrorsAreWrittenToLog() throws Exception {
-		// TODO
+		// FIXME I don't think this is possible.
+		PrintStream errSpy = spy(System.err);
+		
+		// When a task is executed, the instrument fires the taskError event.
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				instrumentListener.taskError(((String) invocation.getArguments()[0]));
+				return null;
+			}
+			
+		}).when(instrument).execute(anyString());
+		
+		for (String task : tasks) {
+			instrument.execute(task);
+		}
+		for (String task : tasks) {
+			verify(errSpy).println(contains(task));
+		}
 	}
 }
