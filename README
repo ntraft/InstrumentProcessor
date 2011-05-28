@@ -1,0 +1,11 @@
+InstrumentProcessor: A mocking kata
+-----------------------------------
+
+This project is the source of a coding kata focused on mocking. The idea is to 
+spark a discussion on the benefits and/or drawbacks of mocked objects and 
+mocking frameworks in unit tests. The original kata which this is based on was 
+written for .NET, and it has been adapted for Java. I hope you find it 
+interesting and engaging.
+
+For a full description of the kata, see here:
+http://www.planetgeek.ch/2010/03/28/mocking-kata-instrument-processor-net/
