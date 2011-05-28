@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -93,7 +94,8 @@ public class InstrumentProcessorTest {
 	
 	@Test
 	public void testExceptionsBubbleUpToCaller() throws Exception {
-		// TODO make Instrument.execute() throw exceptions
+		doThrow(new RuntimeException()).when(instrument).execute(anyString());
+		
 		try {
 			processor.process();
 		} catch (Throwable t) {
