@@ -1,10 +1,19 @@
 package org.bostoncodingdojo;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class InstrumentProcessorTest {
 
@@ -12,19 +21,28 @@ public class InstrumentProcessorTest {
 	private InstrumentProcessor processor;
 	private String[] tasks;
 	private Instrument instrument;
-	private TestInstrumentListener instrumentListener;
+	private InstrumentListener instrumentListener;
 
 	@Before
 	public void before() {
+		// TODO Could probably clean this up with @Mock annotations.
 		tasks = new String[]{"jocular", "infinite", "drastic", "popsicle", "comeback"};
-		// TODO Don't use default implementations, instead use mocks.
-		dispatcher = new DefaultTaskDispatcher(tasks);
-		instrument = new DefaultInstrument();
-		instrumentListener = new TestInstrumentListener();
-		instrument.addInstrumentListener(instrumentListener);
-		// Problem: I have to pass in the objects I want it to delegate to, so I can
-		// confirm that they were actually used. Would I still have this problem if I
-		// were using a mocking framework?
+		
+		// TaskDispatcher returns 5 tasks, in this order.
+		dispatcher = mock(TaskDispatcher.class);
+		when(dispatcher.getTask()).thenReturn("jocular", "infinite", "drastic", "popsicle", "comeback");
+		
+		// When a processor adds its listener to the instrument, we'll cache it so we 
+		// can call methods on it later.
+		instrument = mock(Instrument.class);
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				instrumentListener = (InstrumentListener) invocation.getArguments()[0];
+				return null;
+			}
+		}).when(instrument).addInstrumentListener(any(InstrumentListener.class));
+		
 		processor = new DefaultInstrumentProcessor(dispatcher, instrument);
 	}
 	
@@ -39,17 +57,37 @@ public class InstrumentProcessorTest {
 	
 	@Test
 	public void testProcessExecutesNextTask() throws Exception {
-		for (String task : tasks) {
+		for (int i=0; i<tasks.length; i++) {
 			processor.process();
-			// TODO assert Instrument.execute() is called with task.
+		}
+		// We want verification to happen at the VERY end. If I verified in each
+		// iteration of the loop, then I can't be sure that each string was only used
+		// once.
+		for (String task : tasks) {
+			verify(instrument).execute(task);
+			// Don't want it to call finishedTask prematurely. It should only call this
+			// when it receives the finished event.
+			verify(dispatcher, never()).finishedTask(anyString());
 		}
 	}
 	
 	@Test
 	public void testProcessFinishesNextTask() throws Exception {
+		// When a task is executed, the instrument fires the taskFinished event.
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				instrumentListener.taskFinished((String) invocation.getArguments()[0]);
+				return null;
+			}
+			
+		}).when(instrument).execute(anyString());
+		
 		for (String task : tasks) {
-			processor.process();
-			// TODO assert TaskDispatcher.finishedTask() is called with task.
+			instrument.execute(task);
+		}
+		for (String task : tasks) {
+			verify(dispatcher).finishedTask(task);
 		}
 	}
 	
@@ -58,30 +96,17 @@ public class InstrumentProcessorTest {
 		// TODO make Instrument.execute() throw exceptions
 		try {
 			processor.process();
-			fail();
 		} catch (Throwable t) {
 			// Success.
+			return;
 		}
+		
+		// Didn't throw.
+		fail();
 	}
 	
 	@Test
 	public void testErrorsAreWrittenToLog() throws Exception {
 		// TODO
-	}
-	
-	private final class TestInstrumentListener implements InstrumentListener {
-		
-		String lastExecutedTask;
-		String lastErrorTask;
-		
-		@Override
-		public void taskFinished(String task) {
-			lastExecutedTask = task;
-		}
-		
-		@Override
-		public void taskError(String task) {
-			lastErrorTask = task;
-		}
 	}
 }
