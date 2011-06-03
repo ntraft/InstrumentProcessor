@@ -8,12 +8,11 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.PrintStream;
-
+import org.bostoncodingdojo.log.Log;
+import org.bostoncodingdojo.log.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -113,8 +112,8 @@ public class InstrumentProcessorTest {
 	
 	@Test
 	public void testErrorsAreWrittenToLog() throws Exception {
-		// FIXME I don't think this is possible.
-		PrintStream errSpy = spy(System.err);
+		Logger logger = mock(Logger.class);
+		Log.setDefaultLogger(logger);
 		
 		// When a task is executed, the instrument fires the taskError event.
 		doAnswer(new Answer<Void>() {
@@ -130,7 +129,7 @@ public class InstrumentProcessorTest {
 			instrument.execute(task);
 		}
 		for (String task : tasks) {
-			verify(errSpy).println(contains(task));
+			verify(logger).error(contains(task));
 		}
 	}
 }

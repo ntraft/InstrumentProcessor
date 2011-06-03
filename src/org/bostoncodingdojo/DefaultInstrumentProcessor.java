@@ -1,5 +1,8 @@
 package org.bostoncodingdojo;
 
+import org.bostoncodingdojo.log.Log;
+
+
 
 public class DefaultInstrumentProcessor implements InstrumentProcessor {
 	
@@ -17,7 +20,7 @@ public class DefaultInstrumentProcessor implements InstrumentProcessor {
 			
 			@Override
 			public void taskError(String task) {
-				System.err.println("Error executing task: " + task);
+				Log.error("Error executing task: " + task);
 			}
 		});
 	}
