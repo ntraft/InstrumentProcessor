@@ -1,6 +1,7 @@
 package org.bostoncodingdojo;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,21 @@ public class InstrumentProcessorTest {
 		}
 		dispatcher.allTasksFinished();
 	}
+
+	@Test
+	public void testExceptionsBubbleUpToCaller() throws Exception {
+		TestTaskDispatcher dispatcher = new TestTaskDispatcher();
+		TestInstrument instrument = new TestInstrument();
+		instrument.throwExceptions = true;
+		InstrumentProcessor proc = new DefaultInstrumentProcessor(dispatcher, instrument);
+		try {
+			proc.process();
+		} catch (Throwable t) {
+			// Success.
+			return;
+		}
+		fail();
+	}
 	
 	private static class TestTaskDispatcher implements TaskDispatcher {
 		
@@ -63,12 +79,16 @@ public class InstrumentProcessorTest {
 		
 	}
 	
-	private class TestInstrument implements Instrument {
+	private static class TestInstrument implements Instrument {
 
 		private final List<InstrumentListener> listeners = new ArrayList<InstrumentListener>();
+		boolean throwExceptions = false;
 		
 		@Override
 		public void execute(String task) {
+			if (throwExceptions) {
+				throw new RuntimeException("You shall not pass!");
+			}
 			for (InstrumentListener listener : listeners) {
 				listener.taskFinished(task);
 			}
