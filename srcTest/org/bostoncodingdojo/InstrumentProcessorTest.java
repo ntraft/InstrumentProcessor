@@ -52,6 +52,11 @@ public class InstrumentProcessorTest {
 		}
 		fail();
 	}
+
+	@Test
+	public void testErrorsAreWrittenToLog() throws Exception {
+		// Discuss: How can we test this? Do we need to test this?
+	}
 	
 	private static class TestTaskDispatcher implements TaskDispatcher {
 		
