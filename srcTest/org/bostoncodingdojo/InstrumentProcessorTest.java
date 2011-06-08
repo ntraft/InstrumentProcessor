@@ -36,7 +36,7 @@ public class InstrumentProcessorTest {
 		dispatcher = mock(TaskDispatcher.class);
 		when(dispatcher.getTask()).thenReturn("jocular", "infinite", "drastic", "popsicle", "comeback");
 		
-		// When a processor adds its listener to the instrument, we'll cache it so we 
+		// When a processor adds its listener to the instrument, we'll cache it so we
 		// can call methods on it later.
 		instrument = mock(Instrument.class);
 		doAnswer(new Answer<Void>() {
@@ -87,9 +87,11 @@ public class InstrumentProcessorTest {
 			
 		}).when(instrument).execute(anyString());
 		
-		for (String task : tasks) {
-			instrument.execute(task);
+		for (int i=0; i<tasks.length; i++) {
+//			instrument.execute(tasks[i]);
+			processor.process();
 		}
+		Thread.sleep(6000);
 		for (String task : tasks) {
 			verify(dispatcher).finishedTask(task);
 		}
