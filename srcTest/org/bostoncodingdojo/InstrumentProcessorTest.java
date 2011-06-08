@@ -9,28 +9,18 @@ import org.junit.Test;
 
 public class InstrumentProcessorTest {
 
-	private TestTaskDispatcher dispatcher;
-	private InstrumentProcessor processor;
+	private SpecialInstrumentProcessor processor;
 	private String[] tasks;
-	private DefaultInstrument instrument;
-	private TestInstrumentListener instrumentListener;
 
 	@Before
 	public void before() {
 		tasks = new String[]{"jocular", "infinite", "drastic", "popsicle", "comeback"};
-		dispatcher = new TestTaskDispatcher(tasks);
-		instrument = new DefaultInstrument();
-		instrumentListener = new TestInstrumentListener();
-		instrument.addInstrumentListener(instrumentListener);
-		processor = new DefaultInstrumentProcessor(dispatcher, instrument);
+		processor = new SpecialInstrumentProcessor(tasks);
 	}
 	
 	@After
 	public void after() {
 		tasks = null;
-		dispatcher = null;
-		instrument = null;
-		instrumentListener = null;
 		processor = null;
 	}
 	
@@ -38,7 +28,7 @@ public class InstrumentProcessorTest {
 	public void testProcessExecutesNextTask() throws Exception {
 		for (String task : tasks) {
 			processor.process();
-			assertEquals(task, instrumentListener.lastExecutedTask);
+			assertEquals(task, processor.getInstrument().lastExecutedTask);
 		}
 	}
 	
@@ -46,21 +36,19 @@ public class InstrumentProcessorTest {
 	public void testProcessFinishesNextTask() throws Exception {
 		for (String task : tasks) {
 			processor.process();
-//			Thread.sleep(500);
-			assertEquals(task, dispatcher.lastFinishedTask);
+			assertEquals(task, processor.getDispatcher().lastFinishedTask);
 		}
 	}
 	
 	@Test
 	public void testExceptionsBubbleUpToCaller() throws Exception {
-		instrument = new ExceptionThrowingInstrument();
-		processor = new DefaultInstrumentProcessor(dispatcher, instrument);
 		try {
 			processor.process();
-			fail();
 		} catch (Throwable t) {
 			// Success.
+			return;
 		}
+		fail();
 	}
 	
 	@Test
