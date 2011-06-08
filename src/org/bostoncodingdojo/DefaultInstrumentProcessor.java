@@ -24,8 +24,16 @@ public class DefaultInstrumentProcessor implements InstrumentProcessor {
 
 	@Override
 	public void process() {
-		String task = dispatcher.getTask();
-		instrument.execute(task);
+		final String task = dispatcher.getTask();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {}
+				instrument.execute(task);
+			}
+		}).start();
 	}
 	
 }
