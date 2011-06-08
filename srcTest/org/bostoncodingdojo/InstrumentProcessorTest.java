@@ -22,9 +22,6 @@ public class InstrumentProcessorTest {
 		instrument = new DefaultInstrument();
 		instrumentListener = new TestInstrumentListener();
 		instrument.addInstrumentListener(instrumentListener);
-		// Problem: I have to pass in the objects I want it to delegate to, so I can
-		// confirm that they were actually used. Would I still have this problem if I
-		// were using a mocking framework?
 		processor = new DefaultInstrumentProcessor(dispatcher, instrument);
 	}
 	
@@ -49,6 +46,7 @@ public class InstrumentProcessorTest {
 	public void testProcessFinishesNextTask() throws Exception {
 		for (String task : tasks) {
 			processor.process();
+//			Thread.sleep(500);
 			assertEquals(task, dispatcher.lastFinishedTask);
 		}
 	}
