@@ -42,6 +42,7 @@ public class InstrumentProcessorTest {
 	
 	@Test
 	public void testExceptionsBubbleUpToCaller() throws Exception {
+		// Can only test this if we have a way to cause the Instrument to throw an exception.
 		try {
 			processor.process();
 		} catch (Throwable t) {
@@ -56,43 +57,5 @@ public class InstrumentProcessorTest {
 		// If we really wanted to test this, we would need the ability to pass a custom
 		// PrintStream into the processor, so we could see what its output is. But I'm
 		// not going to do that because we can already see that's overkill.
-	}
-
-	private final class TestTaskDispatcher extends DefaultTaskDispatcher {
-		
-		private String lastFinishedTask;
-
-		TestTaskDispatcher(String[] tasks) {
-			super(tasks);
-		}
-		
-		@Override
-		public void finishedTask(String task) {
-			super.finishedTask(task);
-			lastFinishedTask = task;
-		}
-	}
-	
-	private final class ExceptionThrowingInstrument extends DefaultInstrument {
-		@Override
-		public void execute(String task) {
-			throw new RuntimeException("Surprise!");
-		}
-	}
-	
-	private final class TestInstrumentListener implements InstrumentListener {
-		
-		String lastExecutedTask;
-		String lastErrorTask;
-		
-		@Override
-		public void taskFinished(String task) {
-			lastExecutedTask = task;
-		}
-		
-		@Override
-		public void taskError(String task) {
-			lastErrorTask = task;
-		}
 	}
 }

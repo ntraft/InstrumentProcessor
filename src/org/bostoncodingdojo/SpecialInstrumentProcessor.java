@@ -3,8 +3,8 @@ package org.bostoncodingdojo;
 
 public class SpecialInstrumentProcessor implements InstrumentProcessor {
 
-	private final TaskDispatcher dispatcher;
-	private final Instrument instrument;
+	private final DefaultTaskDispatcher dispatcher;
+	private final DefaultInstrument instrument;
 
 	SpecialInstrumentProcessor(String[] tasks) {
 		dispatcher = new DefaultTaskDispatcher(tasks);
@@ -22,11 +22,11 @@ public class SpecialInstrumentProcessor implements InstrumentProcessor {
 		});
 	}
 	
-	Instrument getInstrument() {
+	final DefaultInstrument getInstrument() {
 		return instrument;
 	}
 	
-	final TaskDispatcher getDispatcher() {
+	final DefaultTaskDispatcher getDispatcher() {
 		return dispatcher;
 	}
 

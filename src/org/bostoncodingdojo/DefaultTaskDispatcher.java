@@ -4,6 +4,7 @@ public class DefaultTaskDispatcher implements TaskDispatcher {
 
 	private final String[] tasks;
 	private int index = 0;
+	Object lastFinishedTask;
 
 	DefaultTaskDispatcher(String[] tasks) {
 		this.tasks = tasks;
@@ -15,6 +16,8 @@ public class DefaultTaskDispatcher implements TaskDispatcher {
 	}
 	
 	@Override
-	public void finishedTask(String task) {}
+	public void finishedTask(String task) {
+		lastFinishedTask = task;
+	}
 	
 }

@@ -7,9 +7,11 @@ import java.util.List;
 class DefaultInstrument implements Instrument {
 	
 	List<InstrumentListener> listeners = new ArrayList<InstrumentListener>();
+	Object lastExecutedTask;
 	
 	@Override
 	public void execute(final String task) {
+		lastExecutedTask = task;
 		for (InstrumentListener listener : listeners) {
 			listener.taskFinished(task);
 		}
