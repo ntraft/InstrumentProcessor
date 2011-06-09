@@ -10,14 +10,9 @@ class DefaultInstrument implements Instrument {
 	
 	@Override
 	public void execute(final String task) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (InstrumentListener listener : listeners) {
-					listener.taskFinished(task);
-				}
-			}
-		}).start();
+		for (InstrumentListener listener : listeners) {
+			listener.taskFinished(task);
+		}
 	}
 	
 	@Override
